@@ -4,6 +4,8 @@ const ccNumberInput = document.getElementById("cc-num");
 const zipCode = document.getElementById("zip");
 const cvv = document.getElementById("cvv");
 
+// Focus on name input on load
+window. onload = function() { userNameInput. focus(); };
 
 // Validators
 
@@ -35,7 +37,7 @@ function isValidCvv(cvv) {
 
 // Error Display
 
-function showOrHideTip(show, element) {
+function showOrHide(show, element) {
     // show element when show is true, hide when false
     if (show) {
       element.style.display = "inherit";
@@ -50,12 +52,58 @@ function createListener(validator) {
       const valid = validator(text);
       const showTip = text !== "" && !valid;
       const tooltip = e.target.nextElementSibling;
-      showOrHideTip(showTip, tooltip);
+      showOrHide(showTip, tooltip);
     };
 }
+
+
+// Event Listeners For Validators
 
 userNameInput.addEventListener("input", createListener(isValidUsername));
 emailInput.addEventListener("input", createListener(isValidEmail));
 ccNumberInput.addEventListener("input", createListener(isValidCCNum));
 zipCode.addEventListener("input", createListener(isValidZipCode));
 cvv.addEventListener("input", createListener(isValidCvv));
+
+
+// Job Role Selector & Functionality
+
+const jobRole = document.getElementById("title");
+const otherJobRole = document.getElementById('other-job-role');
+showOrHide(false, otherJobRole);
+
+jobRole.addEventListener('change', () => {
+  let selection = jobRole.selectedIndex;
+  showOrHide(selection == '6', otherJobRole);
+  });
+
+
+// T-Shirt Info Selector & Functionality
+const shirtColor = document.getElementById('shirt-colors');
+showOrHide(false, shirtColor);
+const shirtColorOpt1 = `<p><label for="color">Color:</label>
+<select id="color">
+  <option selected hidden>Select a design theme above</option>
+  <option data-theme="js puns" value="cornflowerblue">Cornflower Blue (JS Puns shirt only)</option>
+  <option data-theme="js puns" value="darkslategrey">Dark Slate Grey (JS Puns shirt only)</option> 
+  <option data-theme="js puns" value="gold">Gold (JS Puns shirt only)</option>
+  </select>`
+const shirtColorOpt2 = `<p><label for="color">Color:</label>
+<select id="color">
+<option selected hidden>Select a design theme above</option>
+<option data-theme="heart js" value="tomato">Tomato (I &#9829; JS shirt only)</option>
+<option data-theme="heart js" value="steelblue">Steel Blue (I &#9829; JS shirt only)</option> 
+<option data-theme="heart js" value="dimgrey">Dim Grey (I &#9829; JS shirt only)</option>
+</select>`
+
+const shirtDesign = document.getElementById('design');
+shirtDesign.addEventListener('change', () => {
+  let selection = shirtDesign.selectedIndex;
+    if (selection == '1') {
+      showOrHide(true, shirtColor);
+    shirtColor.innerHTML = shirtColorOpt1;
+} else if (selection == '2') {
+  showOrHide(true, shirtColor);
+  shirtColor.innerHTML = shirtColorOpt2;
+}
+});
