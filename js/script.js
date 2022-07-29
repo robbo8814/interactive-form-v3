@@ -37,15 +37,15 @@ function isValidCvv(cvv) {
 
 // Error Display
 
+//Function to show or hide dom elements
 function showOrHide(show, element) {
-    // show element when show is true, hide when false
     if (show) {
-      element.style.display = "inherit";
+      element.style.display = "block";
     } else {
       element.style.display = "none";
     }
 }
-  
+// Function to add or remove error tips
 function createListener(validator) {
     return e => {
       const text = e.target.value;
@@ -53,6 +53,14 @@ function createListener(validator) {
       const showTip = text !== "" && !valid;
       const tooltip = e.target.nextElementSibling;
       showOrHide(showTip, tooltip);
+      // Add | Remove class for valid/not-valid
+      if (showTip) {
+      e.target.parentElement.classList.add('not-valid');
+      e.target.parentElement.classList.remove('valid');
+      } else if (!showTip) {
+        e.target.parentElement.classList.add('valid');
+        e.target.parentElement.classList.remove('not-valid');
+      }
     };
 }
 
@@ -80,15 +88,20 @@ jobRole.addEventListener('change', () => {
 
 // T-Shirt Info Selector & Functionality
 const shirtColor = document.getElementById('shirt-colors');
+const colorItems = document.getElementById('color');
+const shirtDesign = document.getElementById('design');
+console.log(colorItems.options[1].dataset.theme)
+console.log(colorItems.options[4].dataset.theme)
 showOrHide(false, shirtColor);
-const shirtColorOpt1 = `<p><label for="color">Color:</label>
+
+const shirtColorOpt1 = `<label for="color">Color:</label>
 <select id="color">
   <option selected hidden>Select a design theme above</option>
   <option data-theme="js puns" value="cornflowerblue">Cornflower Blue (JS Puns shirt only)</option>
   <option data-theme="js puns" value="darkslategrey">Dark Slate Grey (JS Puns shirt only)</option> 
   <option data-theme="js puns" value="gold">Gold (JS Puns shirt only)</option>
   </select>`
-const shirtColorOpt2 = `<p><label for="color">Color:</label>
+const shirtColorOpt2 = `<label for="color">Color:</label>
 <select id="color">
 <option selected hidden>Select a design theme above</option>
 <option data-theme="heart js" value="tomato">Tomato (I &#9829; JS shirt only)</option>
@@ -96,8 +109,20 @@ const shirtColorOpt2 = `<p><label for="color">Color:</label>
 <option data-theme="heart js" value="dimgrey">Dim Grey (I &#9829; JS shirt only)</option>
 </select>`
 
-const shirtDesign = document.getElementById('design');
 shirtDesign.addEventListener('change', () => {
+showOrHide(true, shirtColor);
+
+  // if (shirtDesign.value === 'js puns') {
+  //   for(let i=0; i<colorItems.length; i++) {
+  //     if (colorItems[i].dataset.theme = 'js puns') {
+  //       console.log(colorItems[i]);
+  //       colorItems[i].style.display = 'block';
+  //       // showOrHide(true, colorItems[i]);
+  //     } else {
+  //       showOrHide(false, colorItems[i]);
+  //     }
+  //   }
+  // }
   let selection = shirtDesign.selectedIndex;
     if (selection == '1') {
       showOrHide(true, shirtColor);
