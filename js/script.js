@@ -3,9 +3,33 @@ const emailInput = document.getElementById("email");
 const ccNumberInput = document.getElementById("cc-num");
 const zipCode = document.getElementById("zip");
 const cvv = document.getElementById("cvv");
+const jobRole = document.getElementById("title");
+const otherJobRole = document.getElementById('other-job-role');
+const colorItems = document.getElementById('color');
+const shirtColorParent = colorItems.parentNode;
+const shirtDesign = document.getElementById('design');
+const actRegister = document.getElementById('activities');
+const totalCost = document.getElementById('activities-cost');
+let sumCost = 0;
+let totalAct = 0;
+const actChecks = document.getElementById('activities-box')
+const checkBoxNum = actChecks.querySelectorAll("input[type=checkbox]")
+const mainConf = document.querySelector('[name="all"]');
+const javaLib = document.querySelector('[name="js-libs"]');
+const nodeWork = document.querySelector('[name="node"]');
+const javaFrame = document.querySelector('[name="js-frameworks"]');
+const buildTool = document.querySelector('[name="build-tools"]');
+const npmWork = document.querySelector('[name="npm"]');
+const expWork = document.querySelector('[name="express"]');
+const paymentMethod = document.getElementById('payment');
+const creditCard = document.getElementById('credit-card');
+const payPal = document.getElementById('paypal');
+const bitCoin = document.getElementById('bitcoin');
+const register = document.querySelector('[type="submit"]');
 
 // Focus on name input on load
 window. onload = function() { userNameInput. focus(); };
+
 
 // Validators
 
@@ -45,7 +69,9 @@ function showOrHide(show, element) {
       element.style.display = "none";
     }
 }
+
 // Function to add or remove error tips
+
 function createListener(validator) {
     return e => {
       const text = e.target.value;
@@ -75,8 +101,7 @@ cvv.addEventListener("input", createListener(isValidCvv));
 
 
 // Job Role Selector & Functionality
-const jobRole = document.getElementById("title");
-const otherJobRole = document.getElementById('other-job-role');
+
 showOrHide(false, otherJobRole);
 
 jobRole.addEventListener('change', () => {
@@ -86,9 +111,6 @@ jobRole.addEventListener('change', () => {
 
 
 // T-Shirt Info Selector & Functionality
-const colorItems = document.getElementById('color');
-const shirtColorParent = colorItems.parentNode;
-const shirtDesign = document.getElementById('design');
 showOrHide(false, shirtColorParent);
 
 shirtDesign.addEventListener('change', () => {
@@ -121,20 +143,6 @@ shirtDesign.addEventListener('change', () => {
 
 
 // Activity Register
-
-const actRegister = document.getElementById('activities');
-const totalCost = document.getElementById('activities-cost');
-let sumCost = 0;
-let totalAct = 0;
-const actChecks = document.getElementById('activities-box')
-const checkBoxNum = actChecks.querySelectorAll("input[type=checkbox]")
-const mainConf = document.querySelector('[name="all"]');
-const javaLib = document.querySelector('[name="js-libs"]');
-const nodeWork = document.querySelector('[name="node"]');
-const javaFrame = document.querySelector('[name="js-frameworks"]');
-const buildTool = document.querySelector('[name="build-tools"]');
-const npmWork = document.querySelector('[name="npm"]');
-const expWork = document.querySelector('[name="express"]');
 
 function timeAllocated() {
   if (javaLib.checked) {
@@ -169,15 +177,6 @@ function validateAct () {
   }
 }
 
-for (let i=0; i<checkBoxNum; i++) {
-  checkBoxNum[i].addEventListener("focus", (e) => {
-    e.target.parentElement.classList.add("focus");
-  });
-  checkBoxNum[i].addEventListener("blur", (e) => {
-    e.target.parentElement.classList.remove("focus");
-  });
-}
-
 actRegister.addEventListener('change', (e) => {
   let activity = e.target;
   timeAllocated();
@@ -196,22 +195,27 @@ actRegister.addEventListener('change', (e) => {
 });
 
 
-// Payment Type Selector
-const paymentMethod = document.getElementById('payment');
-const creditCard = document.getElementById('credit-card');
-const payPal = document.getElementById('paypal');
-const bitCoin = document.getElementById('bitcoin');
+// Accessibility addition for checkbox focus
+for (let i=0; i<checkBoxNum; i++) {
+  checkBoxNum[i].addEventListener("focus", (e) => {
+    e.target.parentElement.classList.add("focus");
+  });
+  checkBoxNum[i].addEventListener("blur", (e) => {
+    e.target.parentElement.classList.remove("focus");
+  });
+}
 
+
+// Payment Type Selector
 function paymentToDisplay(display, hide1, hide2) {
   showOrHide(true, display);
   showOrHide(false, hide1);
   showOrHide(false, hide2);
 }
-
+paymentMethod.selectedIndex = 1;
 paymentToDisplay(creditCard, bitCoin, payPal);
 
 paymentMethod.addEventListener('change', () => {
-  // paymentType();
   let selection = paymentMethod.selectedIndex;
   if (selection == '2') {
     paymentToDisplay(payPal, creditCard, bitCoin);
@@ -222,9 +226,8 @@ paymentMethod.addEventListener('change', () => {
   }
 });
 
-const register = document.querySelector('[type="submit"]');
-// register.setAttribute('onsubmit', "submitForm(event)")
 
+// Prevent form submission if required fields not valid
 
 register.addEventListener("submit", (e) => {
   if (!isValidUsername()) {
