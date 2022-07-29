@@ -37,7 +37,7 @@ function isValidCvv(cvv) {
 
 // Error Display
 
-//Function to show or hide dom elements
+// Function to show or hide dom elements
 function showOrHide(show, element) {
     if (show) {
       element.style.display = "block";
@@ -75,60 +75,123 @@ cvv.addEventListener("input", createListener(isValidCvv));
 
 
 // Job Role Selector & Functionality
-
 const jobRole = document.getElementById("title");
 const otherJobRole = document.getElementById('other-job-role');
 showOrHide(false, otherJobRole);
 
 jobRole.addEventListener('change', () => {
   let selection = jobRole.selectedIndex;
-  showOrHide(selection == '6', otherJobRole);
+  showOrHide(selection == jobRole.length-1, otherJobRole);
   });
 
 
 // T-Shirt Info Selector & Functionality
-const shirtColor = document.getElementById('shirt-colors');
 const colorItems = document.getElementById('color');
+const shirtColorParent = colorItems.parentNode;
 const shirtDesign = document.getElementById('design');
-console.log(colorItems.options[1].dataset.theme)
-console.log(colorItems.options[4].dataset.theme)
-showOrHide(false, shirtColor);
-
-const shirtColorOpt1 = `<label for="color">Color:</label>
-<select id="color">
-  <option selected hidden>Select a design theme above</option>
-  <option data-theme="js puns" value="cornflowerblue">Cornflower Blue (JS Puns shirt only)</option>
-  <option data-theme="js puns" value="darkslategrey">Dark Slate Grey (JS Puns shirt only)</option> 
-  <option data-theme="js puns" value="gold">Gold (JS Puns shirt only)</option>
-  </select>`
-const shirtColorOpt2 = `<label for="color">Color:</label>
-<select id="color">
-<option selected hidden>Select a design theme above</option>
-<option data-theme="heart js" value="tomato">Tomato (I &#9829; JS shirt only)</option>
-<option data-theme="heart js" value="steelblue">Steel Blue (I &#9829; JS shirt only)</option> 
-<option data-theme="heart js" value="dimgrey">Dim Grey (I &#9829; JS shirt only)</option>
-</select>`
+showOrHide(false, shirtColorParent);
 
 shirtDesign.addEventListener('change', () => {
-showOrHide(true, shirtColor);
+  const jsPuns = colorItems[1].dataset.theme
+  const i3JS = colorItems[4].dataset.theme
 
-  // if (shirtDesign.value === 'js puns') {
-  //   for(let i=0; i<colorItems.length; i++) {
-  //     if (colorItems[i].dataset.theme = 'js puns') {
-  //       console.log(colorItems[i]);
-  //       colorItems[i].style.display = 'block';
-  //       // showOrHide(true, colorItems[i]);
-  //     } else {
-  //       showOrHide(false, colorItems[i]);
-  //     }
-  //   }
-  // }
-  let selection = shirtDesign.selectedIndex;
-    if (selection == '1') {
-      showOrHide(true, shirtColor);
-    shirtColor.innerHTML = shirtColorOpt1;
-} else if (selection == '2') {
-  showOrHide(true, shirtColor);
-  shirtColor.innerHTML = shirtColorOpt2;
+    if (shirtDesign.value === jsPuns) {
+      for (let i=0; i<colorItems.length; i++) {
+        showOrHide(true, shirtColorParent);
+        let currentColor = colorItems.options[i];
+        if (currentColor.dataset.theme === jsPuns) {
+          currentColor.hidden = false;
+        } else {
+          currentColor.hidden = true;
+        }
+      }
+    } else if (shirtDesign.value === i3JS) {
+      for (let i=0; i<colorItems.length; i++) {
+        showOrHide(true, shirtColorParent);
+        let currentColor = colorItems.options[i];
+        if (currentColor.dataset.theme === i3JS) {
+          currentColor.hidden = false;
+        } else {
+          currentColor.hidden = true;
+        }
+      }
+    }
+});
+
+
+// Activity Register
+
+const actRegister = document.getElementById('activities');
+const totalCost = document.getElementById('activities-cost');
+let sumCost = 0;
+const mainConf = document.querySelector('[name="all"]');
+const javaLib = document.querySelector('[name="js-libs"]');
+const nodeWork = document.querySelector('[name="node"]');
+const javaFrame = document.querySelector('[name="js-frameworks"]');
+const buildTool = document.querySelector('[name="build-tools"]');
+const npmWork = document.querySelector('[name="npm"]');
+const expWork = document.querySelector('[name="express"]');
+
+function timeAllocated() {
+if (javaLib.checked) {
+  javaFrame.disabled = true;
+} else if (!javaLib.checked) {
+  javaFrame.disabled = false;
 }
+if (javaFrame.checked) {
+  javaLib.disabled = true;
+} else if (!javaFrame.checked) {
+  javaLib.disabled = false;
+}
+if (nodeWork.checked) {
+  buildTool.disabled = true;
+} else if (!nodeWork.checked) {
+  buildTool.disabled = false;
+}
+if (buildTool.checked) {
+  nodeWork.disabled = true;
+} else if (!buildTool.checked) {
+  nodeWork.disabled = false;
+}
+}
+
+actRegister.addEventListener('change', (e) => {
+  console.log('checked');
+  timeAllocated();
+  // Calculator
+  let activity = e.target;
+  let actCost = parseInt(activity.getAttribute('data-cost'));
+  if (activity.checked) {
+    sumCost += actCost;
+  } else {
+    sumCost -= actCost;
+  }
+  totalCost.innerHTML = `Total: $${sumCost}`
+});
+
+
+// Payment Type Selector
+const paymentMethod = document.getElementById('payment');
+const creditCard = document.getElementById('credit-card');
+const payPal = document.getElementById('paypal');
+const bitCoin = document.getElementById('bitcoin');
+
+function paymentToDisplay(display, hide1, hide2) {
+  showOrHide(true, display);
+  showOrHide(false, hide1);
+  showOrHide(false, hide2);
+}
+
+paymentToDisplay(creditCard, bitCoin, payPal);
+
+paymentMethod.addEventListener('change', () => {
+  // paymentType();
+  let selection = paymentMethod.selectedIndex;
+  if (selection == '2') {
+    paymentToDisplay(payPal, creditCard, bitCoin);
+  } else if (selection == '3') {
+    paymentToDisplay(bitCoin, creditCard, payPal);
+  } else {
+    paymentToDisplay(creditCard, payPal, bitCoin);
+  }
 });
