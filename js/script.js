@@ -92,6 +92,7 @@ const shirtDesign = document.getElementById('design');
 showOrHide(false, shirtColorParent);
 
 shirtDesign.addEventListener('change', () => {
+  colorItems.selectedIndex = 0;
   const jsPuns = colorItems[1].dataset.theme
   const i3JS = colorItems[4].dataset.theme
 
