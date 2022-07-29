@@ -125,6 +125,9 @@ shirtDesign.addEventListener('change', () => {
 const actRegister = document.getElementById('activities');
 const totalCost = document.getElementById('activities-cost');
 let sumCost = 0;
+let totalAct = 0;
+const actChecks = document.getElementById('activities-box')
+const checkBoxNum = actChecks.querySelectorAll("input[type=checkbox]")
 const mainConf = document.querySelector('[name="all"]');
 const javaLib = document.querySelector('[name="js-libs"]');
 const nodeWork = document.querySelector('[name="node"]');
@@ -134,40 +137,62 @@ const npmWork = document.querySelector('[name="npm"]');
 const expWork = document.querySelector('[name="express"]');
 
 function timeAllocated() {
-if (javaLib.checked) {
-  javaFrame.disabled = true;
-} else if (!javaLib.checked) {
-  javaFrame.disabled = false;
+  if (javaLib.checked) {
+    javaFrame.disabled = true;
+  } else if (!javaLib.checked) {
+    javaFrame.disabled = false;
+  }
+  if (javaFrame.checked) {
+    javaLib.disabled = true;
+  } else if (!javaFrame.checked) {
+    javaLib.disabled = false;
+  }
+  if (nodeWork.checked) {
+    buildTool.disabled = true;
+  } else if (!nodeWork.checked) {
+    buildTool.disabled = false;
+  }
+  if (buildTool.checked) {
+    nodeWork.disabled = true;
+  } else if (!buildTool.checked) {
+    nodeWork.disabled = false;
+  }
 }
-if (javaFrame.checked) {
-  javaLib.disabled = true;
-} else if (!javaFrame.checked) {
-  javaLib.disabled = false;
+
+function validateAct () {
+  if (totalAct !== 0) {
+    actRegister.firstElementChild.className = 'valid';
+    showOrHide(false, actRegister.lastElementChild);
+  } else {
+    actRegister.firstElementChild.className = 'not-valid';
+    showOrHide(true, actRegister.lastElementChild);
+  }
 }
-if (nodeWork.checked) {
-  buildTool.disabled = true;
-} else if (!nodeWork.checked) {
-  buildTool.disabled = false;
-}
-if (buildTool.checked) {
-  nodeWork.disabled = true;
-} else if (!buildTool.checked) {
-  nodeWork.disabled = false;
-}
+
+for (let i=0; i<checkBoxNum; i++) {
+  checkBoxNum[i].addEventListener("focus", (e) => {
+    e.target.parentElement.classList.add("focus");
+  });
+  checkBoxNum[i].addEventListener("blur", (e) => {
+    e.target.parentElement.classList.remove("focus");
+  });
 }
 
 actRegister.addEventListener('change', (e) => {
-  console.log('checked');
-  timeAllocated();
-  // Calculator
   let activity = e.target;
+  timeAllocated();
+
+  // Calculator
   let actCost = parseInt(activity.getAttribute('data-cost'));
   if (activity.checked) {
     sumCost += actCost;
+    totalAct += 1;
   } else {
     sumCost -= actCost;
+    totalAct -= 1;
   }
   totalCost.innerHTML = `Total: $${sumCost}`
+  validateAct();
 });
 
 
@@ -194,5 +219,29 @@ paymentMethod.addEventListener('change', () => {
     paymentToDisplay(bitCoin, creditCard, payPal);
   } else {
     paymentToDisplay(creditCard, payPal, bitCoin);
+  }
+});
+
+const register = document.querySelector('[type="submit"]');
+// register.setAttribute('onsubmit', "submitForm(event)")
+
+
+register.addEventListener("submit", (e) => {
+  if (!isValidUsername()) {
+    e.preventDefault()
+  }
+  if (!isValidEmail()) {
+    e.preventDefault()
+  }
+  if (paymentMethod.selectedIndex === 1) {
+    if (!isValidCCNum()) {
+      e.preventDefault()
+   }
+   if (!isValidZipCode()) {
+    e.preventDefault()
+  }
+  if (!isValidCvv()) {
+    e.preventDefault()
+  }
   }
 });
