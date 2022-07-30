@@ -1,3 +1,7 @@
+/////////////////////////////////////
+//////// All Global Variables ///////
+/////////////////////////////////////
+
 const userNameInput = document.getElementById("name");
 const emailInput = document.getElementById("email");
 const ccNumberInput = document.getElementById("cc-num");
@@ -31,7 +35,9 @@ const register = document.querySelector('[type="submit"]');
 window. onload = function() { userNameInput. focus(); };
 
 
-// Validators
+/////////////////////////////////////
+//////////// Validators /////////////
+/////////////////////////////////////
 
 // Can only contain letters a-z in lowercase
 function isValidUsername(username) {
@@ -58,9 +64,7 @@ function isValidCvv(cvv) {
     return /^\d{3}$/.test(cvv);
 }
 
-
 // Error Display
-
 // Function to show or hide dom elements
 function showOrHide(show, element) {
     if (show) {
@@ -71,7 +75,6 @@ function showOrHide(show, element) {
 }
 
 // Function to add or remove error tips
-
 function createListener(validator) {
     return e => {
       const text = e.target.value;
@@ -90,27 +93,28 @@ function createListener(validator) {
     };
 }
 
-
 // Event Listeners For Validators
-
 userNameInput.addEventListener("input", createListener(isValidUsername));
 emailInput.addEventListener("input", createListener(isValidEmail));
 ccNumberInput.addEventListener("input", createListener(isValidCCNum));
 zipCode.addEventListener("input", createListener(isValidZipCode));
 cvv.addEventListener("input", createListener(isValidCvv));
 
-
-// Job Role Selector & Functionality
+/////////////////////////////////////
+///////// Job Role Selector /////////
+/////////////////////////////////////
 
 showOrHide(false, otherJobRole);
 
 jobRole.addEventListener('change', () => {
   let selection = jobRole.selectedIndex;
-  showOrHide(selection == jobRole.length-1, otherJobRole);
+  showOrHide(selection == jobRole.length-1, otherJobRole); // assumes 'Other' is always last in the list
   });
 
+/////////////////////////////////////
+///////// T-Shirt  Selector /////////
+/////////////////////////////////////
 
-// T-Shirt Info Selector & Functionality
 showOrHide(false, shirtColorParent);
 
 shirtDesign.addEventListener('change', () => {
@@ -118,55 +122,46 @@ shirtDesign.addEventListener('change', () => {
   const jsPuns = colorItems[1].dataset.theme
   const i3JS = colorItems[4].dataset.theme
 
-    if (shirtDesign.value === jsPuns) {
-      for (let i=0; i<colorItems.length; i++) {
-        showOrHide(true, shirtColorParent);
-        let currentColor = colorItems.options[i];
-        if (currentColor.dataset.theme === jsPuns) {
-          currentColor.hidden = false;
-        } else {
-          currentColor.hidden = true;
-        }
-      }
-    } else if (shirtDesign.value === i3JS) {
-      for (let i=0; i<colorItems.length; i++) {
-        showOrHide(true, shirtColorParent);
-        let currentColor = colorItems.options[i];
-        if (currentColor.dataset.theme === i3JS) {
-          currentColor.hidden = false;
-        } else {
-          currentColor.hidden = true;
-        }
+  if (shirtDesign.value === jsPuns) {
+    for (let i=0; i<colorItems.length; i++) {
+      showOrHide(true, shirtColorParent);
+      let currentColor = colorItems.options[i];
+      if (currentColor.dataset.theme === jsPuns) {
+        currentColor.hidden = false;
+      } else {
+        currentColor.hidden = true;
       }
     }
+  } else if (shirtDesign.value === i3JS) {
+    for (let i=0; i<colorItems.length; i++) {
+      showOrHide(true, shirtColorParent);
+      let currentColor = colorItems.options[i];
+      if (currentColor.dataset.theme === i3JS) {
+        currentColor.hidden = false;
+      } else {
+        currentColor.hidden = true;
+      }
+    }
+  }
 });
 
 
-// Activity Register
+/////////////////////////////////////
+///////// Activity Register /////////
+/////////////////////////////////////
 
-function timeAllocated() {
-  if (javaLib.checked) {
-    javaFrame.disabled = true;
-  } else if (!javaLib.checked) {
-    javaFrame.disabled = false;
+// Preventing activities being chosen if they are at the same time as another
+function timeAllocated(active) {
+  for (let i=0; i<checkBoxNum.length; i++) {
+    if (checkBoxNum[i].dataset.dayAndTime === active.dataset.dayAndTime && checkBoxNum[i] !== active && active.checked) {
+      checkBoxNum[i].disabled = true;
+    } else if (checkBoxNum[i].dataset.dayAndTime === active.dataset.dayAndTime && !active.checked) {
+      checkBoxNum[i].disabled = false;
+    }
   }
-  if (javaFrame.checked) {
-    javaLib.disabled = true;
-  } else if (!javaFrame.checked) {
-    javaLib.disabled = false;
-  }
-  if (nodeWork.checked) {
-    buildTool.disabled = true;
-  } else if (!nodeWork.checked) {
-    buildTool.disabled = false;
-  }
-  if (buildTool.checked) {
-    nodeWork.disabled = true;
-  } else if (!buildTool.checked) {
-    nodeWork.disabled = false;
-  }
-}
+};
 
+// Showing error message if no activities selected
 function validateAct () {
   if (totalAct !== 0) {
     actRegister.firstElementChild.className = 'valid';
@@ -177,20 +172,24 @@ function validateAct () {
   }
 }
 
+// Total cost calculator
+function actCalc(active) {
+let actCost = parseInt(active.getAttribute('data-cost'));
+if (active.checked) {
+  sumCost += actCost;
+  totalAct += 1;
+} else {
+  sumCost -= actCost;
+  totalAct -= 1;
+}
+totalCost.innerHTML = `Total: $${sumCost}`
+}
+
+// Activity register rvent listener for checkbox selection & total cost calculator
 actRegister.addEventListener('change', (e) => {
   let activity = e.target;
-  timeAllocated();
-
-  // Calculator
-  let actCost = parseInt(activity.getAttribute('data-cost'));
-  if (activity.checked) {
-    sumCost += actCost;
-    totalAct += 1;
-  } else {
-    sumCost -= actCost;
-    totalAct -= 1;
-  }
-  totalCost.innerHTML = `Total: $${sumCost}`
+  timeAllocated(activity);
+  actCalc(activity);
   validateAct();
 });
 
