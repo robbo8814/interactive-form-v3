@@ -32,7 +32,7 @@ const bitCoin = document.getElementById('bitcoin');
 const register = document.querySelector('[type="submit"]');
 
 // Focus on name input on load
-window. onload = function() { userNameInput. focus(); };
+window.onload = function() { userNameInput. focus(); };
 
 
 /////////////////////////////////////
@@ -114,10 +114,11 @@ jobRole.addEventListener('change', () => {
 /////////////////////////////////////
 ///////// T-Shirt  Selector /////////
 /////////////////////////////////////
-
-showOrHide(false, shirtColorParent);
+colorItems.setAttribute('disabled', 'true');
 
 shirtDesign.addEventListener('change', () => {
+  colorItems.removeAttribute('disabled');
+  colorItems[0].innerHTML = 'Select a Color';
   colorItems.selectedIndex = 0;
   const jsPuns = colorItems[1].dataset.theme;
   const i3JS = colorItems[4].dataset.theme;
