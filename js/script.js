@@ -65,59 +65,94 @@ function isValidCvv() {
     return /^\d{3}$/.test(cvv.value);
 };
 
+
+
+
 // Error Display
-// Function to show or hide dom elements
+// Functions to show or hide dom elements & create event listeners
 function showOrHide(show, element) {
     if (show) {
       element.style.display = "block";
-    } else {
+      element.classList.add('not-valid');
+      element.classList.remove('valid');
+    } else if (!show) {
       element.style.display = "none";
+      element.classList.add('valid');
+      element.classList.remove('not-valid');
     };
 };
 
-// Function to add or remove error tips
-function createListener(validator) {
-    return e => {
-      const text = e.target.value;
-      const valid = validator(text);
-      const showTip = text !== "" && !valid;
-      const tooltip = e.target.nextElementSibling;
-      const targetElement = e.target.parentElement;
-      showOrHide(showTip, tooltip);
-      // Add | Remove class for valid/not-valid
-      if (showTip) {
-        targetElement.classList.add('not-valid');
-        targetElement.classList.remove('valid');
-      } else if (!showTip) {
-        targetElement.classList.add('valid');
-        targetElement.classList.remove('not-valid');
-      };
-// Adding alternate error for name field
-      if (e.target == userNameInput) {
-        if (text == '') {
-          targetElement.classList.add('not-valid');
-          targetElement.classList.remove('valid');
-          targetElement.lastElementChild.textContent = 'Field cannot be blank';
-          targetElement.lastElementChild.style.display = 'block';
-          return emptyName = true;
-        }
-        if (text !== '' && !showTip) {
-          targetElement.classList.add('valid');
-          targetElement.classList.remove('not-valid');
-          targetElement.lastElementChild.textContent = 'Name field cannot be blank or contain numbers';
-        };
-        if (e.target !== '') {
-          return emptyName = false;
-        }
-      };
+function validatorForAll(field, fieldValidator) {
+    let element = field.nextElementSibling;
+    if (!fieldValidator()) {
+      showOrHide(true, element);
+    } else if (emailInput.value == '') {
+      emailInput.nextElementSibling.textContent = 'Field cannot be blank';
+      element.style.display = 'block';
+      showOrHide(true, element);
+    } else if (fieldValidator()) {
+      showOrHide(false, element);
     };
-  };
-// Event Listeners For Validators
-userNameInput.addEventListener("input", createListener(isValidUsername));
-emailInput.addEventListener("input", createListener(isValidEmail));
-ccNumberInput.addEventListener("input", createListener(isValidCCNum));
-zipCode.addEventListener("input", createListener(isValidZipCode));
-cvv.addEventListener("input", createListener(isValidCvv));
+};
+
+function createListener(field, fieldValidator) {
+  field.addEventListener("input", () => {
+    validatorForAll(field, fieldValidator)
+  })
+}
+// Calling all validators
+createListener(userNameInput, isValidUsername);
+createListener(emailInput, isValidEmail);
+createListener(ccNumberInput, isValidCCNum);
+createListener(zipCode, isValidZipCode);
+createListener(cvv, isValidCvv);
+
+
+
+// Function to add or remove error tips
+// function createListener(validator) {
+//     return e => {
+//       const text = e.target.value;
+//       const valid = validator(text);
+//       const showTip = text !== "" && !valid;
+//       const tooltip = e.target.nextElementSibling;
+//       const targetElement = e.target.parentElement;
+//       showOrHide(showTip, tooltip);
+//       // Add | Remove class for valid/not-valid
+//       if (showTip) {
+//         targetElement.classList.add('not-valid');
+//         targetElement.classList.remove('valid');
+//       } else if (!showTip) {
+//         targetElement.classList.add('valid');
+//         targetElement.classList.remove('not-valid');
+//       };
+// // Adding alternate error for name field
+//       if (e.target == userNameInput) {
+//         if (text == '') {
+//           targetElement.classList.add('not-valid');
+//           targetElement.classList.remove('valid');
+//           targetElement.lastElementChild.textContent = 'Field cannot be blank';
+//           targetElement.lastElementChild.style.display = 'block';
+//           return emptyName = true;
+//         }
+//         if (text !== '' && !showTip) {
+//           targetElement.classList.add('valid');
+//           targetElement.classList.remove('not-valid');
+//           targetElement.lastElementChild.textContent = 'Name field cannot be blank or contain numbers';
+//         };
+//         if (e.target !== '') {
+//           return emptyName = false;
+//         }
+//       };
+//     };
+//   };
+// // Event Listeners For Validators
+// userNameInput.addEventListener("input", createListener(isValidUsername));
+// emailInput.addEventListener("input", createListener(isValidEmail));
+// ccNumberInput.addEventListener("input", createListener(isValidCCNum));
+// zipCode.addEventListener("input", createListener(isValidZipCode));
+// cvv.addEventListener("input", createListener(isValidCvv));
+
 
 /////////////////////////////////////
 ///////// Job Role Selector /////////
@@ -144,7 +179,7 @@ shirtDesign.addEventListener('change', () => {
 
   if (shirtDesign.value === jsPuns) {
     for (let i=0; i<colorItems.length; i++) {
-      showOrHide(true, shirtColorParent);
+      shirtColorParent.style.display = "block";
       let currentColor = colorItems.options[i];
       if (currentColor.dataset.theme === jsPuns) {
         currentColor.hidden = false;
@@ -154,7 +189,7 @@ shirtDesign.addEventListener('change', () => {
     };
   } else if (shirtDesign.value === i3JS) {
     for (let i=0; i<colorItems.length; i++) {
-      showOrHide(true, shirtColorParent);
+      shirtColorParent.style.display = "block";
       let currentColor = colorItems.options[i];
       if (currentColor.dataset.theme === i3JS) {
         currentColor.hidden = false;
@@ -236,9 +271,9 @@ for (let i=0; i<checkBoxNum.length; i++) {
 
 // Payment Type Selector
 function paymentToDisplay(display, hide1, hide2) {
-  showOrHide(true, display);
-  showOrHide(false, hide1);
-  showOrHide(false, hide2);
+  display.style.display = "block";
+  hide1.style.display = "none";
+  hide2.style.display = "none";
 };
 paymentMethod.selectedIndex = 1;
 paymentToDisplay(creditCard, bitCoin, payPal);
@@ -263,10 +298,25 @@ paymentMethod.addEventListener('change', () => {
 
 register.addEventListener("submit", (e) => {
   if (!isValidUsername() || !isValidEmail() || totalAct == 0 || emptyName) {
+    validatorForAll(userNameInput, isValidUsername);
+    // validatorForAll(emailInput, isValidEmail);
+    validateAct();
+    if (emailInput.value == '') {
+      emailInput.nextElementSibling.textContent = 'Field cannot be blank';
+      emailInput.nextElementSibling.style.display = "block";
+      emailInput.classList.add('not-valid');
+      emailInput.classList.remove('valid');
+    } if (emailInput.value !== '') {
+          validatorForAll(emailInput, isValidEmail);
+          emailInput.nextElementSibling.textContent = 'Email address must be formatted correctly';
+    }
     e.preventDefault()
   };
   if (paymentMethod.selectedIndex === 1) {
     if (!isValidCCNum() || !isValidZipCode() || !isValidCvv()) {
+      validatorForAll(ccNumberInput, isValidCCNum);
+      validatorForAll(zipCode, isValidZipCode);
+      validatorForAll(cvv, isValidCvv);
       e.preventDefault()
    };
   };
