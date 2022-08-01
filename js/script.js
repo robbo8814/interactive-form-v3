@@ -262,7 +262,7 @@ paymentMethod.addEventListener('change', () => {
 // Prevent form submission if required fields not valid
 
 register.addEventListener("submit", (e) => {
-  if (!isValidUsername || !isValidEmail|| totalAct == 0 || emptyName) {
+  if (!isValidUsername() || !isValidEmail() || totalAct == 0 || emptyName) {
     e.preventDefault()
   };
   if (paymentMethod.selectedIndex === 1) {
