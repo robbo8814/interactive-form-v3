@@ -29,7 +29,7 @@ const paymentMethod = document.getElementById('payment');
 const creditCard = document.getElementById('credit-card');
 const payPal = document.getElementById('paypal');
 const bitCoin = document.getElementById('bitcoin');
-const register = document.querySelector('[type="submit"]');
+const register = document.querySelector('form');
 
 // Focus on name input on load
 window.onload = function() { userNameInput. focus(); };
@@ -40,28 +40,28 @@ window.onload = function() { userNameInput. focus(); };
 /////////////////////////////////////
 
 // Can only contain letters a-z in lowercase
-function isValidUsername(username) {
-    return /^[a-z|A-Z]+$/.test(username);
+function isValidUsername() {
+    return /^[a-zA-Z]+ ?[a-zA-Z]*? ?[a-zA-Z]*?$/.test(userNameInput.value);
 };
 
 // Must be a valid email address
-function isValidEmail(email) {
-    return /^[^@]+@[^@.]+\.[a-z]+$/i.test(email);
+function isValidEmail() {
+    return /^[^@]+@[^@.]+\.[a-z]+$/i.test(emailInput.value);
 };
   
 // The credit card number must be between 13-16 digits
-function isValidCCNum(ccnum) {
-    return /^\d{13,16}$/.test(ccnum);
+function isValidCCNum() {
+    return /^\d{13,16}$/.test(ccNumberInput.value);
 };
 
 // The zip code must be 5 digits
-function isValidZipCode(zipCode) {
-    return /^\d{5}$/.test(zipCode);
+function isValidZipCode() {
+    return /^\d{5}$/.test(zipCode.value);
 };
 
 // The cvv must be 3 digits
-function isValidCvv(cvv) {
-    return /^\d{3}$/.test(cvv);
+function isValidCvv() {
+    return /^\d{3}$/.test(cvv.value);
 };
 
 // Error Display
@@ -90,9 +90,17 @@ function createListener(validator) {
         e.target.parentElement.classList.add('valid');
         e.target.parentElement.classList.remove('not-valid');
       };
-    };
-}
+      if (e.target.value == '') {
+        e.target.parentElement.classList.add('not-valid');
+        e.target.parentElement.classList.remove('valid');
+      } else if (e.target.value !== '') {
+        e.target.parentElement.classList.add('valid');
+        e.target.parentElement.classList.remove('not-valid');
+        e.target.innerHTML -= 'This field cannot be empty';
 
+      }
+    };
+  };
 // Event Listeners For Validators
 userNameInput.addEventListener("input", createListener(isValidUsername));
 emailInput.addEventListener("input", createListener(isValidEmail));
@@ -170,6 +178,7 @@ function validateAct () {
   } else {
     actRegister.firstElementChild.className = 'not-valid';
     showOrHide(true, actRegister.lastElementChild);
+    return false;
   };
 };
 
@@ -242,21 +251,12 @@ paymentMethod.addEventListener('change', () => {
 // Prevent form submission if required fields not valid
 
 register.addEventListener("submit", (e) => {
-  if (!isValidUsername()) {
-    e.preventDefault()
-  };
-  if (!isValidEmail()) {
+  if (!isValidUsername || !isValidEmail|| totalAct == 0) {
     e.preventDefault()
   };
   if (paymentMethod.selectedIndex === 1) {
-    if (!isValidCCNum()) {
+    if (!isValidCCNum() || !isValidZipCode() || !isValidCvv()) {
       e.preventDefault()
    };
-   if (!isValidZipCode()) {
-    e.preventDefault()
-  };
-  if (!isValidCvv()) {
-    e.preventDefault()
-  };
   };
 });
