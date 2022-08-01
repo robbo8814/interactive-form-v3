@@ -30,6 +30,7 @@ const creditCard = document.getElementById('credit-card');
 const payPal = document.getElementById('paypal');
 const bitCoin = document.getElementById('bitcoin');
 const register = document.querySelector('form');
+let emptyName = false;
 
 // Focus on name input on load
 window.onload = function() { userNameInput. focus(); };
@@ -81,24 +82,34 @@ function createListener(validator) {
       const valid = validator(text);
       const showTip = text !== "" && !valid;
       const tooltip = e.target.nextElementSibling;
+      const targetElement = e.target.parentElement;
       showOrHide(showTip, tooltip);
       // Add | Remove class for valid/not-valid
       if (showTip) {
-      e.target.parentElement.classList.add('not-valid');
-      e.target.parentElement.classList.remove('valid');
+        targetElement.classList.add('not-valid');
+        targetElement.classList.remove('valid');
       } else if (!showTip) {
-        e.target.parentElement.classList.add('valid');
-        e.target.parentElement.classList.remove('not-valid');
+        targetElement.classList.add('valid');
+        targetElement.classList.remove('not-valid');
       };
-      if (e.target.value == '') {
-        e.target.parentElement.classList.add('not-valid');
-        e.target.parentElement.classList.remove('valid');
-      } else if (e.target.value !== '') {
-        e.target.parentElement.classList.add('valid');
-        e.target.parentElement.classList.remove('not-valid');
-        e.target.innerHTML -= 'This field cannot be empty';
-
-      }
+// Adding alternate error for name field
+      if (e.target == userNameInput) {
+        if (text == '') {
+          targetElement.classList.add('not-valid');
+          targetElement.classList.remove('valid');
+          targetElement.lastElementChild.textContent = 'Field cannot be blank';
+          targetElement.lastElementChild.style.display = 'block';
+          return emptyName = true;
+        }
+        if (text !== '' && !showTip) {
+          targetElement.classList.add('valid');
+          targetElement.classList.remove('not-valid');
+          targetElement.lastElementChild.textContent = 'Name field cannot be blank or contain numbers';
+        };
+        if (e.target !== '') {
+          return emptyName = false;
+        }
+      };
     };
   };
 // Event Listeners For Validators
@@ -251,7 +262,7 @@ paymentMethod.addEventListener('change', () => {
 // Prevent form submission if required fields not valid
 
 register.addEventListener("submit", (e) => {
-  if (!isValidUsername || !isValidEmail|| totalAct == 0) {
+  if (!isValidUsername || !isValidEmail|| totalAct == 0 || emptyName) {
     e.preventDefault()
   };
   if (paymentMethod.selectedIndex === 1) {
