@@ -220,12 +220,12 @@ actRegister.addEventListener('change', (e) => {
 /////////////////////////////////////
 
 // Accessibility addition for checkbox focus
-for (let i=0; i<checkBoxNum; i++) {
-  checkBoxNum[i].addEventListener("focus", (e) => {
-    e.target.parentElement.classList.add("focus");
+for (let i=0; i<checkBoxNum.length; i++) {
+  checkBoxNum[i].addEventListener('focus', (e) => {
+    e.target.parentElement.classList.add('focus');
   });
-  checkBoxNum[i].addEventListener("blur", (e) => {
-    e.target.parentElement.classList.remove("focus");
+  checkBoxNum[i].addEventListener('blur', (e) => {
+    e.target.parentElement.classList.remove('focus');
   });
 };
 
