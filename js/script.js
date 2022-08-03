@@ -66,31 +66,30 @@ function isValidCvv() {
 
 // Error Display
 // Functions to show or hide dom elements & create event listeners
+// Creating a showOrHide function for Validators, Job Role & Activity Register
 function showOrHide(show, element) {
-    if (show) {
-      element.style.display = "block";
-      element.classList.add('not-valid');
-      element.classList.remove('valid');
-    } else if (!show) {
-      element.style.display = "none";
-      element.classList.add('valid');
-      element.classList.remove('not-valid');
-    };
+  if (show) {
+    element.style.display = "block";
+  } else if (!show) {
+    element.style.display = "none";
+  };
 };
+
 // Seperated showOrHide & validatorForAll so that they could be used independently later in program
 function validatorForAll(field, fieldValidator) {
     let element = field.nextElementSibling;
     if (!fieldValidator()) {
       showOrHide(true, element);
+      element.parentElement.classList.add('not-valid');
+      element.parentElement.classList.remove('valid');
     } else if (fieldValidator()) {
       showOrHide(false, element);
+      element.parentElement.classList.add('valid');
+      element.parentElement.classList.remove('not-valid');
     };
     // Adding alternate text for Email error if text is missing
     if (emailInput.value == '' && field == emailInput) {
       emailInput.nextElementSibling.textContent = 'Field cannot be blank';
-      emailInput.nextElementSibling.style.display = "block";
-      emailInput.classList.add('not-valid');
-      emailInput.classList.remove('valid');
     } if (emailInput.value !== '') {
           emailInput.nextElementSibling.textContent = 'Email address must be formatted correctly';
     }
@@ -114,6 +113,7 @@ createListener(cvv, isValidCvv);
 ///////// Job Role Selector /////////
 /////////////////////////////////////
 
+// Setting Other Job Role field as hidden until selected
 showOrHide(false, otherJobRole);
 
 jobRole.addEventListener('change', () => {
@@ -166,8 +166,10 @@ function timeAllocated(active) {
   for (let i=0; i<checkBoxNum.length; i++) {
     if (checkBoxNum[i].dataset.dayAndTime === active.dataset.dayAndTime && checkBoxNum[i] !== active && active.checked) {
       checkBoxNum[i].disabled = true;
+      checkBoxNum[i].parentElement.classList.add('disabled');
     } else if (checkBoxNum[i].dataset.dayAndTime === active.dataset.dayAndTime && !active.checked) {
       checkBoxNum[i].disabled = false;
+      checkBoxNum[i].parentElement.classList.remove('disabled');
     };
   };
 };
