@@ -30,7 +30,6 @@ const creditCard = document.getElementById('credit-card');
 const payPal = document.getElementById('paypal');
 const bitCoin = document.getElementById('bitcoin');
 const register = document.querySelector('form');
-let emptyName = false;
 
 // Focus on name input on load
 window.onload = function() { userNameInput. focus(); };
@@ -78,7 +77,7 @@ function showOrHide(show, element) {
       element.classList.remove('not-valid');
     };
 };
-
+// Seperated showOrHide & validatorForAll so that they could be used independently later in program
 function validatorForAll(field, fieldValidator) {
     let element = field.nextElementSibling;
     if (!fieldValidator()) {
@@ -86,13 +85,23 @@ function validatorForAll(field, fieldValidator) {
     } else if (fieldValidator()) {
       showOrHide(false, element);
     };
+    // Adding alternate text for Email error if text is missing
+    if (emailInput.value == '' && field == emailInput) {
+      emailInput.nextElementSibling.textContent = 'Field cannot be blank';
+      emailInput.nextElementSibling.style.display = "block";
+      emailInput.classList.add('not-valid');
+      emailInput.classList.remove('valid');
+    } if (emailInput.value !== '') {
+          emailInput.nextElementSibling.textContent = 'Email address must be formatted correctly';
+    }
 };
-
+// Creating listener for field inputs
 function createListener(field, fieldValidator) {
   field.addEventListener("input", () => {
     validatorForAll(field, fieldValidator)
   })
 }
+
 // Calling all validators
 createListener(userNameInput, isValidUsername);
 createListener(emailInput, isValidEmail);
@@ -242,23 +251,14 @@ paymentMethod.addEventListener('change', () => {
 /////////////////////////////////////
 
 // Prevent form submission if required fields not valid
-
 register.addEventListener("submit", (e) => {
-  if (!isValidUsername() || !isValidEmail() || totalAct == 0 || emptyName) {
+  if (!isValidUsername() || !isValidEmail() || totalAct == 0) {
     validatorForAll(userNameInput, isValidUsername);
-    // validatorForAll(emailInput, isValidEmail);
+    validatorForAll(emailInput, isValidEmail);
     validateAct();
-    // Putting in a different error message as required for Exceeds Expectations
-    if (emailInput.value == '') {
-      emailInput.nextElementSibling.textContent = 'Field cannot be blank';
-      emailInput.nextElementSibling.style.display = "block";
-      emailInput.classList.add('not-valid');
-      emailInput.classList.remove('valid');
-    } if (emailInput.value !== '') {
-          emailInput.nextElementSibling.textContent = 'Email address must be formatted correctly';
-    }
     e.preventDefault()
   };
+  // Only check credit card validity if credit card field selected
   if (paymentMethod.selectedIndex === 1) {
     if (!isValidCCNum() || !isValidZipCode() || !isValidCvv()) {
       validatorForAll(ccNumberInput, isValidCCNum);
